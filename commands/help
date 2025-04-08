@@ -1,0 +1,31 @@
+#!/bin/bash
+
+cli_help() {
+  print_help "" "
+    install: Install essential and non-essential packages
+    setup: Initialize your system with best practises
+  "
+  exit 1
+}
+
+command_setup_help() {
+  print_help "setup" "
+    <none>: Will run setup with full setup and installation of most important apps  
+    user: Setup a new central admin user
+    cron: Configure cron usage
+  "
+  exit 1
+}
+
+command_install_help() {
+  print_help "install" "
+    all: Installs all available packages
+    custom: Installs packages listed in custom_install prop in your config.conf file (comma separated)
+    essential: Installs essential packages (ufw, ssh, fail2ban)
+    <package>: Install one or more packages, separated by space
+
+    Available packages:
+    ufw, ssh, fail2ban, docker, webmin, nginx, selinux, portainer, vsftpd, certbot
+  "
+  exit 1
+}

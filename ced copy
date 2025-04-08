@@ -1,0 +1,70 @@
+#!/bin/bash
+# ced
+# Script to setup a linux server with some basic apps and configs
+
+###
+# Vars
+###
+# CED
+export cli_use_name="ced"
+export cwd=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd ) || /opt/ced
+# System
+export os=$(cat /etc/os-release)
+export public_ip=$(curl -s http://whatismyip.akamai.com/)
+export curuser=$(who am i | awk '{print $1}')
+export sudouser="${SUDO_USER:-$USER}"
+export adminusr="${sudouser:-$curuser}"
+# Folders
+export third_party=$cwd/thirdparty
+export config_path=$cwd/config.conf
+export outputlog=$cwd/logs/output.log 
+export errorlog=$cwd/logs/errors.log
+export fulllog=$cwd/logs/full.log
+
+# Load common functions and commands
+load_func() {
+  for filename in $1; do
+    source "$filename"
+  done
+}
+load_func "$cwd/common/*.sh"
+load_func "$cwd/commands/*"
+
+# Create config file if not present
+if [ $(file_exists $config_path) = false ]; then
+  cp $cwd/config.template $config_path
+fi
+# Create log files if not present
+touch $cwd/logs/install.log
+touch $cwd/logs/full.log
+
+case $1 in
+  "")
+    update
+    if [ $(get_conf "first_run") = true ]; then
+      log "First time run" DEBUG
+      command_setup ""
+      set_conf "first_run" false
+    fi
+    exit 0
+    ;;
+  i|install)
+    shift
+    update
+    command_install $@
+    ;;
+  s|setup)
+    shift
+    update
+    command_setup $2
+    ;;
+  help)
+    cli_help
+    ;;
+  -*|--*)
+    log "Unknown option $1. Use ced help to show a list of options" WARN
+    ;;
+  *)
+    cli_help
+    ;;
+esac

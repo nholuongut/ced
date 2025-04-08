@@ -1,0 +1,10 @@
+first_run=true
+
+# 0 DEBUG, 1 VERBOSE, 3 INFO, 4 WARN, 5 ERROR
+log_level=0
+
+# Whether to show apt logs
+log_apt=true
+
+# Define a build to install
+custom_install=ufw,ssh,fail2ban,docker,nginx,portainer,vsftpd,certbot

@@ -1,0 +1,84 @@
+#!/bin/bash
+
+
+command_install() {
+  while [[ $# -gt 0 ]]; do
+  case $1 in
+    "all")
+      install_ufw
+      install_ssh
+      install_fail2ban
+      install_docker
+      install_webmin
+      install_nginx
+      install_portainer
+      install_vsftpd
+      install_certbot
+      log "Successfully installed all packages." INFO
+      exit 0
+      ;;
+    "custom")
+      log "Loading custom config for install..." INFO
+      variable=$(get_conf "custom_install")
+      for v in $(echo $variable | sed "s/,/ /g")
+      do
+        install_$v
+      done
+      log "Successfully installed packages listed in custom config." INFO
+      exit 0
+      ;;
+    "essential")
+      install_ufw
+      install_ssh
+      install_fail2ban
+      log "Successfully installed essential packages." INFO
+      exit 0
+      ;;
+    "ufw")
+      install_ufw
+      shift
+      ;;
+    "fail2ban")
+      install_fail2ban
+      shift
+      ;;
+    "ssh")
+      install_ssh
+      shift
+      ;;
+    "docker")
+      install_docker
+      shift
+      ;;
+    "webmin")
+      install_webmin
+      shift
+      ;;
+    "nginx")
+      install_nginx
+      shift
+      ;;
+    "selinux")
+      install_selinux
+      shift
+      ;;
+    "portainer")
+      install_portainer
+      shift
+      ;;
+    "vsftpd")
+      install_vsftpd
+      shift
+      ;;
+    "certbot")
+      install_certbot
+      shift
+      ;;
+    *)
+      command_install_help
+      ;;
+    esac
+  done
+
+  log "Successfully installed all requested packages." INFO
+}
